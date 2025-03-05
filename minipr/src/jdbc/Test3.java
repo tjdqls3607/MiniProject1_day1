@@ -1,42 +1,53 @@
 package jdbc;
 
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 // Statement 사용
 // CRUD 를 메소드화 - url, user, pwd 를 static
 //   메소드내에서 Connection, Statement, ResutSet 객체화
 //   메소드내에서 예외 처리
+// Statement -> PreparedStatement 전환
+// 하드코딩된 value --> 메소드의 parameter
+// Dto -> select 에 적용
 public class Test3 {
     // MySQL 에 접근하기 위해 필요한 3가지
     static String url = "jdbc:mysql://localhost:3306/madang";
     static String user = "root";
-    static String pwd = "root";
+    static String pwd = "1234";
 
     public static void main(String[] args) {
 
-//      insertCustomer();
-//      updateCustomer();
-//      deleteCustomer();
+//      insertCustomer(6, "손흥민", "영국 토트넘", "010-6666-6666");
+//        updateCustomer(6, "대한민국 서울");
+        deleteCustomer(6);
 //      listCustomer();
-        detailCustomer();
+//      detailCustomer();
     }
-    static void insertCustomer() {
+    static void insertCustomer(int custId, String name, String address, String phone) {
         Connection con = null;
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
+        String insertSql = "insert into customer values ( ?, ?, ?, ? ); "; // value 에 해당하는 부분을 ? 로 대체
 
         try {
             con = DriverManager.getConnection(url, user, pwd);
-            stmt = con.createStatement();
+            pstmt = con.prepareStatement(insertSql);
+            pstmt.setInt(1, custId);
+            pstmt.setString(2, name);
+            pstmt.setString(3, address);
+            pstmt.setString(4, phone);
 
-            String insertSql = "insert into customer values ( 6, '손흥민', '영국 토트넘', '010-6666-6666' ); ";
-            int ret = stmt.executeUpdate(insertSql);
+            int ret = pstmt.executeUpdate();
             System.out.println(ret);
 
         }catch(SQLException e) {
             e.printStackTrace();
         }finally {
             try {
-                stmt.close();
+                pstmt.close();
                 con.close();
             }catch(SQLException e) {
                 e.printStackTrace();
@@ -44,23 +55,26 @@ public class Test3 {
         }
     }
 
-    static void updateCustomer() {
+    static void updateCustomer(int custId, String address) {
         Connection con = null;
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
+
+        String updateSql = "update customer set address = ? where custid = ?; ";
 
         try {
             con = DriverManager.getConnection(url, user, pwd);
-            stmt = con.createStatement();
+            pstmt = con.prepareStatement(updateSql);
+            pstmt.setString(1, address);
+            pstmt.setInt(2, custId);
 
-            String updateSql = "update customer set address = '대한민국 서울' where custid = 6; ";
-            int ret = stmt.executeUpdate(updateSql);
+            int ret = pstmt.executeUpdate();
             System.out.println(ret);
 
         }catch(SQLException e) {
             e.printStackTrace();
         }finally {
             try {
-                stmt.close();
+                pstmt.close();
                 con.close();
             }catch(SQLException e) {
                 e.printStackTrace();
@@ -68,23 +82,25 @@ public class Test3 {
         }
     }
 
-    static void deleteCustomer() {
+    static void deleteCustomer(int custId) {
         Connection con = null;
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
+
+        String deleteSql = "delete from customer where custid = ?; ";
 
         try {
             con = DriverManager.getConnection(url, user, pwd);
-            stmt = con.createStatement();
+            pstmt = con.createStatement(deleteSql);
+            pstmt.setInt(1, custId);
 
-            String deleteSql = "delete from customer where custid = 6; ";
-            int ret = stmt.executeUpdate(deleteSql);
+            int ret = pstmt.executeUpdate(deleteSql);
             System.out.println(ret);
 
         }catch(SQLException e) {
             e.printStackTrace();
         }finally {
             try {
-                stmt.close();
+                pstmt.close();
                 con.close();
             }catch(SQLException e) {
                 e.printStackTrace();
