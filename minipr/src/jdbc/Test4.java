@@ -18,6 +18,8 @@ import java.util.List;
 //    - close() 작업
 // url 등 전역변수 삭제
 // insert, update, delete 작업 결과를 return 하도록 변경
+
+// 각 메소드에서 Connectrion 객체 등 관련 AutoClosable 적용
 public class Test4 {
 
     public static void main(String[] args) {

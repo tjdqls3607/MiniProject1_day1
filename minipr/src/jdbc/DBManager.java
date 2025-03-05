@@ -22,6 +22,7 @@ public class DBManager {
         return con;
     }
 
+    // releaseConnection Variable Args... (개인적으로는 별로 for 때문)
     public static void releaseConnection(PreparedStatement pstmt, Connection con) {
         try {
             pstmt.close();
