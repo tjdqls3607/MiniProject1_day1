@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class DBManager {
     static String url = "jdbc:mysql://localhost:3306/madangdb";
     static String user = "root";
-    static String pwd = "1234";
+    static String pwd = "root";
 
     public static Connection getConnection() {
         Connection con = null;
