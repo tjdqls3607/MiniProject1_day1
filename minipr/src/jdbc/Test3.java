@@ -115,17 +115,18 @@ public class Test3 {
 
     static List<CustomerDto> listCustomer() {
         Connection con = null;
-        Statement stmt = null;
+        PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         List<CustomerDto> list = new ArrayList<>();
 
+        String selectSql = "select custid, name, address, phone from customer; ";
+
         try {
             con = DriverManager.getConnection(url, user, pwd);
-            stmt = con.createStatement();
+            pstmt = con.prepareStatement(selectSql);
 
-            String selectSql = "select custid, name, address, phone from customer; ";
-            rs = stmt.executeQuery(selectSql);
+            rs = pstmt.executeQuery(selectSql);
             while(rs.next()) {
                 // 각 row 를 CustomerDto 객체로 만들고 ArrayList 담는다.
                 CustomerDto dto = new CustomerDto();
@@ -142,7 +143,7 @@ public class Test3 {
         }finally {
             try {
                 rs.close(); // row 가 있는 상태를 전제
-                stmt.close();
+                pstmt.close();
                 con.close();
             }catch(SQLException e) {
                 e.printStackTrace();
